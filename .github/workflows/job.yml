@@ -8,31 +8,32 @@ on:
 
 jobs:
   ios-ci:
-    name: Run iOS CI
-    runs-on: macos-14  # 🆕 Esto te da Swift 6.1 por defecto
-
+    name: iOS CI
+    runs-on: macos-13
 
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v3
-     
+
       - name: 🧰 Install Swift 6.1
         run: |
           curl -L -o swift.pkg https://download.swift.org/swift-6.1-release/xcode/swift-6.1-RELEASE/swift-6.1-RELEASE-osx.pkg
           sudo installer -pkg swift.pkg -target /
           rm swift.pkg
-
-          # 👉 Fuerza el uso de la toolchain instalada
           echo "/Library/Developer/Toolchains/swift-6.1-RELEASE.xctoolchain/usr/bin" >> $GITHUB_PATH
 
       - name: ✅ Verify Swift version
         run: swift --version
-  
+
+      - name: 🛠️ Install macOS SDK and dev tools
+        run: |
+          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+          echo "SDKROOT=$(xcrun --sdk macosx --show-sdk-path)" >> $GITHUB_ENV
+
       - name: 💎 Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1
-          bundler-cache: false # usamos cache manual
 
       - name: 💾 Cache vendor/bundle
         uses: actions/cache@v3
@@ -42,11 +43,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gems-
 
-      - name: 📦 Install Fastlane and Ruby deps
+      - name: 📦 Install Fastlane and Ruby dependencies
         run: |
           gem install bundler
-          bundle install --path vendor/bundle
+          bundle config set --local path 'vendor/bundle'
+          bundle install
 
-      - name: 🚀 Run Fastlane lane
-        run: |
-          USE_SWIFTLINT=true SCHEME=NombreDeTuEsquema IS_SPM=true bundle exec fastlane ios ci
+      - name: 🚀 Run Fastlane
+        run: USE_SWIFTLINT=true IS_SPM=true SCHEME=NombreDeTuEsquema bundle exec fastlane ios ci

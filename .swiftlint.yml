@@ -1,0 +1,22 @@
+disabled_rules: # reglas que quieres desactivar
+  - trailing_whitespace
+  - line_length
+
+opt_in_rules: # reglas adicionales opcionales
+  - empty_count
+  - explicit_init
+
+included: # carpetas que quieres que lint revise
+  - Sources
+  - Tests
+
+excluded: # carpetas que quieres ignorar
+  - .build
+  - Packages
+  - fastlane
+
+# Puedes personalizar reglas aquí
+line_length:
+  warning: 120
+  error: 150
+

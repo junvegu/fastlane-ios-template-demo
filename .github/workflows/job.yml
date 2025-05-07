@@ -1,0 +1,39 @@
+name: iOS CI with Fastlane (SPM)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ios-ci:
+    name: Run iOS CI
+    runs-on: macos-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 💎 Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+          bundler-cache: false # usamos cache manual
+
+      - name: 💾 Cache vendor/bundle
+        uses: actions/cache@v3
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+
+      - name: 📦 Install Fastlane and Ruby deps
+        run: |
+          gem install bundler
+          bundle install --path vendor/bundle
+
+      - name: 🚀 Run Fastlane lane
+        run: |
+          USE_SWIFTLINT=true SCHEME=NombreDeTuEsquema IS_SPM=true bundle exec fastlane ios ci

@@ -1,0 +1,3 @@
+[submodule "tools/fastlane-core"]
+	path = tools/fastlane-core
+	url = https://github.com/junvegu/junvegu-fastlane-core-template.git

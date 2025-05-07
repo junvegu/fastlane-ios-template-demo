@@ -9,13 +9,22 @@ on:
 jobs:
   ios-ci:
     name: Run iOS CI
-    runs-on: macos-15  # 🆕 Esto te da Swift 6.1 por defecto
+    runs-on: macos-14  # 🆕 Esto te da Swift 6.1 por defecto
 
 
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v3
+     
+      - name: 🧰 Install Swift 6.1
+        run: |
+          curl -L -o swift.pkg https://download.swift.org/swift-6.1-release/xcode/swift-6.1-RELEASE/swift-6.1-RELEASE-osx.pkg
+          sudo installer -pkg swift.pkg -target /
+          rm swift.pkg
 
+      - name: ✅ Verify Swift version
+        run: swift --version
+  
       - name: 💎 Set up Ruby
         uses: ruby/setup-ruby@v1
         with:

@@ -2,9 +2,9 @@ name: iOS CI with Fastlane (SPM)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ quik ]
   pull_request:
-    branches: [ main ]
+    branches: [ quik ]
 
 jobs:
   ios-ci:
